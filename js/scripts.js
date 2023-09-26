@@ -36,7 +36,7 @@ const hot = new Handsontable(container, {
 
 let theChart; // Chart instance stored to be able to clear it later
 document.getElementById("downloadBtn").classList.add("disabled"); // Download button disabled during initialization
-
+document.getElementById("analyzeBtn").classList.add("disabled"); // Analyze button disabled during initialization
 /**
  * Plots chart with chart.js using the data provided
  */
@@ -147,9 +147,17 @@ function plotChart() {
         ctx.style.backgroundColor = "white";
     }
 
+    if(chartBackground == 'bg-light') {
+        document.getElementById('analysisResults').classList.value = "mt-2 text-dark";
+    }
+    else {
+        document.getElementById('analysisResults').classList.value = "mt-2 text-white";
+    }
+
     document.getElementById("chartContainer").hidden = false;
     document.getElementById("chartContainer").classList.value = `rounded p-3 ${chartBackground}`;
     document.getElementById("downloadBtn").classList.remove("disabled"); // Enable download button once chart is plotted
+    document.getElementById("analyzeBtn").classList.remove("disabled"); // Enable analyze button once chart is plotted
 }
 
 /**
@@ -176,4 +184,80 @@ function addDummyData() {
         ['Sunday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
     ]
     hot.loadData(dummyData);
+}
+
+function analyzeData() {
+    const hotData = hot.getData();
+    const insights = [];
+
+    // Calculate basic statistics and trend analysis for each column
+    for (let col = 1; col < hotData[0].length; col++) {
+        const columnData = hotData.slice(1).map(row => parseFloat(row[col]));
+
+        const columnStats = {
+            column: hotData[0][col], // Column name or header
+            count: columnData.length, // Number of data points
+            min: Math.min(...columnData), // Minimum value
+            max: Math.max(...columnData), // Maximum value
+            mean: columnData.reduce((acc, val) => acc + val, 0) / columnData.length, // Mean (average)
+            median: calculateMedian(columnData), // Median (middle value)
+            stdDev: calculateStandardDeviation(columnData), // Standard deviation
+            trend: calculateTrend(columnData), // Trend analysis
+        };
+
+        insights.push(columnStats);
+    }
+
+    const summary = insights.map(columnStats => {
+        const trendStatement = columnStats.trend;
+
+        return `&#8594; "${columnStats.column}" has a high of ${columnStats.max.toFixed(2)}, a low of ${columnStats.min.toFixed(2)}, and a mean of ${columnStats.mean.toFixed(2)}. It also has a median of ${columnStats.median.toFixed(2)}, a standard deviation of ${columnStats.stdDev.toFixed(2)}, and ${trendStatement}.`;
+    });
+
+    const summaryText = summary.join('<br><br>');
+    document.getElementById('analysisResults').innerHTML = summaryText;
+}
+
+
+// Function to calculate the median of an array
+function calculateMedian(arr) {
+    const sortedArr = [...arr].sort((a, b) => a - b);
+    const middle = Math.floor(sortedArr.length / 2);
+
+    if (sortedArr.length % 2 === 0) {
+        return (sortedArr[middle - 1] + sortedArr[middle]) / 2;
+    } else {
+        return sortedArr[middle];
+    }
+}
+
+// Function to calculate the standard deviation of an array
+function calculateStandardDeviation(arr) {
+    const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
+    const squaredDifferences = arr.map(val => Math.pow(val - mean, 2));
+    const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / arr.length;
+    return Math.sqrt(variance);
+}
+
+// Function to calculate the trend of an array
+function calculateTrend(arr) {
+    const n = arr.length;
+    if (n === 0) return 'N/A';
+
+    const data = arr.map((value, index) => [index + 1, value]); 
+    const trendResult = ss.linearRegression(data);
+    console.log(trendResult);
+    const slope = trendResult.m;
+
+    if (slope > 0.05) {
+        return 'there is a strong upward trend';
+    } else if (slope > 0) {
+        return 'there is an upward trend';
+    } else if (slope < -0.05) {
+        return 'there is a strong downward trend';
+    } else if (slope < 0) {
+        return 'there is a downward trend';
+    } else {
+        return 'there is no clear trend';
+    }
 }

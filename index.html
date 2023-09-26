@@ -73,8 +73,9 @@
                         <label for="chartHeight" class="small">Chart Height</label>
                         <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
                         
-                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided.">⚡ Plot</button>
-                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart.">💾 Download Chart</button>
+                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided.">📈 Plot</button>
+                        <button id="analyzeBtn" class="btn btn-outline-primary btn-sm mt-3 full-width shadow-sm" onclick="analyzeData()" data-toggle="tooltip" title="Analyzes the data to provide basic insights - nothing fancy.">⚡ Analyze</button>
+                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart.">⬇️ Download Chart</button>
                         <hr>
                         <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." >🔢 Add Dummy Data</button>
                     </div>
@@ -85,7 +86,7 @@
                 <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
-                        <button class="btn btn-outline-dark btn-sm" id="sidebarToggle">📊</button>
+                        <button class="btn btn-outline-dark btn-sm" id="sidebarToggle">&equiv;</button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
@@ -97,7 +98,9 @@
                 <!-- Page content-->
                 <div class="container-fluid">
                     <h1 class="mt-4 h3">Hi there! 👋</h1>
-                    <p>Just dump your data in the grid below (copy & paste works great from a spreadsheet) and hit "⚡Plot" to see the magic happen!</p>
+                    <p>Just dump your data in the grid below (copy & paste works great from a spreadsheet) 
+                        and hit "📈Plot" to draw a chart and then "⚡Analyze" to see the (weak) magic 
+                        happen!</p>
                     <hr>
                     <div class="row">
                         <h2 class="h4">Data</h2>
@@ -108,8 +111,11 @@
                     <hr>
                     <div class="row mb-5">
                         <div class="col-12 col-md-12 col-xl-12 col-lg-12">
-                            <div id="chartContainer" class="rounded bg-primary p-3" hidden>
-                                <canvas id="theChart" style="height: 400px;" class="rounded"></canvas>
+                            <div id="chartContainer" class="rounded p-3" hidden>
+                                <div>
+                                    <canvas id="theChart" style="height: 400px;" class="rounded"></canvas>
+                                </div>
+                                <div id="analysisResults" class="mt-2 text-white"></div>
                             </div>
                         </div>
                     </div>
@@ -131,6 +137,9 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.2.0/d3.min.js"></script>
+        <script src="https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/brain.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
     </body>
