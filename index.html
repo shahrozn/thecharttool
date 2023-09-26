@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="A side project for plotting charts. No real usecase except for practice with handsontable." />
+        <meta name="author" content="Shahroz Naeem">
+        <title>The Chart Tool</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/ComboChart.png" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Handsontable Styling-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
+        <!-- Custom Style definitions-->
+        <style>
+            .full-width {
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="sidebar-heading border-bottom bg-light">The Chart Tool</div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item list-group-item-light p-3">
+                        <strong>Options</strong>
+                        <hr>
+                        <label for="chartType" class="small">Chart Type</label>
+                        <select id="chartType" class="form-select mb-3 form-select-sm">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                            <option value="scatter">Scatter Chart</option>
+                            <option value="area">Area Chart</option> <!-- Added Area Chart option -->
+                            <!-- Add more chart types as needed -->
+                        </select>
+
+                        <label for="chartBackground" class="small">Chart Background</label>
+                        <select id="chartBackground" class="form-select mb-3 form-select-sm">
+                            <option value="bg-primary">Blue</option>
+                            <option value="bg-success">Green</option>
+                            <option value="bg-info">Teal</option>
+                            <option value="bg-warning">Orange</option>
+                            <option value="bg-danger">Red</option>
+                            <option value="bg-secondary">Gray</option>
+                            <option value="bg-light">Light</option>
+                            <option value="bg-dark">Dark</option>
+                        </select>
+
+                        <label for="chartTheme" class="small">Chart Theme</label>
+                        <select id="chartTheme" class="form-select mb-3 form-select-sm">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+
+                        <label for="chartTitle" class="small">Chart Title</label>
+                        <input type="text" id="chartTitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart title">
+
+                        <label for="chartSubtitle" class="small">Chart Subtitle</label>
+                        <input type="text" id="chartSubtitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart subtitle">
+
+                        <label for="legendPosition" class="small">Legend Position</label>
+                        <select id="legendPosition" class="form-select mb-3 form-select-sm">
+                            <option value="top">Top</option>
+                            <option value="right">Right</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="left">Left</option>
+                        </select>
+
+                        <label for="chartHeight" class="small">Chart Height</label>
+                        <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50">
+                        
+                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()">⚡ Plot</button>
+                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()">💾 Download Chart</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                    <div class="container-fluid">
+                        <button class="btn btn-outline-dark btn-sm" id="sidebarToggle">📊</button>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                                <li class="nav-item active"><a class="nav-link active" href="#!">Home</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <h1 class="mt-4 h3">Hi there! 👋</h1>
+                    <p>Just dump your data in the grid below (copy & paste works great from a spreadsheet) and hit "⚡Plot" to see the magic happen!</p>
+                    <hr>
+                    <div class="row">
+                        <h2 class="h4">Data</h2>
+                        <div class="col-12 col-md-12 col-xl-12 col-lg-12">
+                            <div id="example" class=""></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-xl-12 col-lg-12">
+                            <div id="chartContainer" class="rounded bg-primary p-3" hidden>
+                                <canvas id="theChart" style="height: 400px;" class="rounded"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar bg-light text-dark fixed-bottom">
+            <div class="mx-3 small">
+              &copy; <script>document.write(new Date().getFullYear())</script> The Chart Tool
+            </div>
+        </nav>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
