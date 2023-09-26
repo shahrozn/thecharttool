@@ -29,6 +29,8 @@ const hot = new Handsontable(container, {
     colHeaders: true,
     height: "auto",
     contextMenu: true,
+    fillHandle: true,
+    comments: true,
     licenseKey: "non-commercial-and-evaluation", // for non-commercial use only
 });
 
@@ -37,7 +39,6 @@ document.getElementById("downloadBtn").classList.add("disabled"); // Download bu
 
 /**
  * Plots chart with chart.js using the data provided
- * @returns 
  */
 function plotChart() {
     let selectedChartType = document.getElementById("chartType").value;
@@ -160,4 +161,19 @@ function downloadChart() {
     domtoimage.toBlob(chartCanvas).then(function (blob) {
         window.saveAs(blob, "chart.png");
     });
+}
+
+
+function addDummyData() {
+    let dummyData = [
+        ['Time', 'Type A', 'Type B', 'Type C', 'Type D'],
+        ['Monday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Tuesday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Wednesday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Thursday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Friday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Saturday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Sunday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+    ]
+    hot.loadData(dummyData);
 }

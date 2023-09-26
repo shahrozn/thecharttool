@@ -71,10 +71,12 @@
                         </select>
 
                         <label for="chartHeight" class="small">Chart Height</label>
-                        <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50">
+                        <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
                         
-                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()">⚡ Plot</button>
-                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()">💾 Download Chart</button>
+                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided.">⚡ Plot</button>
+                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart.">💾 Download Chart</button>
+                        <hr>
+                        <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." >🔢 Add Dummy Data</button>
                     </div>
                 </div>
             </div>
