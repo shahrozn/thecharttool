@@ -144,10 +144,10 @@
                 <div class="container-fluid">
                     <h1 class="mt-4 h3">Hi there! 👋</h1>
                     <p>Just dump your data in the grid below (copy & paste works great from a spreadsheet) 
-                        and hit "📈Plot" to draw a chart and then "⚡Analyze" to see the (weak) magic 
+                        and hit "<i class="bi bi-bar-chart-line-fill"></i> Plot" to draw a chart and then "⚡Analyze" to see the (weak) magic 
                         happen!</p>
                     <div class="alert alert-primary" role="alert">
-                        Column A will be used for x axis and Row 1 will be treated as headers in the tool's current state. 
+                        Column A will be used for x axis and Row 1 will be treated as headers in the tool's current state. You can use the "<i class="bi bi-clipboard-data-fill"></i> Add Dummy Data" button on the bottom left to se generate dummy data that's acceptable.
                     </div>
                     <hr>
                     <div class="row">
@@ -159,11 +159,11 @@
                     <hr>
                     <div class="row mb-5">
                         <div id="contentColumn" class="col-12">
-                            <div id="contentContainer" class="rounded p-3" hidden>
+                            <div id="contentContainer" class="rounded p-3">
                                 <div>
                                     <canvas id="theChart" style="height: 400px;" class="rounded"></canvas>
                                 </div>
-                                <div id="analysisResults" class="mt-2 text-white" hidden></div>
+                                <div id="analysisResults" class="mt-2 text-white"></div>
                             </div>
                         </div>
                     </div>
