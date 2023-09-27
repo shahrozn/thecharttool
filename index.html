@@ -67,10 +67,13 @@
                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="optionSetTwo" data-bs-parent="#accordionOptions">
                                 <div class="accordion-body">
                                     <label for="chartType" class="small">Chart Type</label>
-                                    <select id="chartType" class="form-select mb-3 form-select-sm">
-                                        <option value="line">Line Chart</option>
-                                        <option value="bar">Bar Chart</option>
-                                        <option value="area">Area Chart</option>
+                                    <select onchange="onChartTypeChange(this.value)" id="chartType" class="form-select mb-3 form-select-sm">
+                                        <option value="line">Line</option>
+                                        <option value="bar">Bar</option>
+                                        <option value="area">Area</option>
+                                        <option value="doughnut">Donut</option>
+                                        <option value="pie">Pie</option>
+                                        <option value="polarArea">Polar Area</option>
                                     </select>
                                 
                                     <label for="chartBackground" class="small">Chart Background</label>
@@ -98,13 +101,14 @@
                                     <input type="text" id="chartSubtitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart subtitle">
                                 
                                     <label for="legendPosition" class="small">Legend Position</label>
-                                    <select id="legendPosition" class="form-select mb-3 form-select-sm">
+                                    <select id="legendPosition" class="form-select form-select-sm">
                                         <option value="top">Top</option>
                                         <option value="right">Right</option>
                                         <option value="bottom">Bottom</option>
                                         <option value="left">Left</option>
                                     </select>
-                                
+                                    <p class="small mb-3 text-primary"><small id="legendRecommendation"></small></p>
+
                                     <label for="chartHeight" class="small">Chart Height</label>
                                     <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
                                     <label for="chartWidth" class="small">Chart Width</label>
@@ -147,7 +151,14 @@
                         and hit "<i class="bi bi-bar-chart-line-fill"></i> Plot" to draw a chart and then "⚡Analyze" to see the (weak) magic 
                         happen!</p>
                     <div class="alert alert-primary" role="alert">
-                        Column A will be used for x axis and Row 1 will be treated as headers in the tool's current state. You can use the "<i class="bi bi-clipboard-data-fill"></i> Add Dummy Data" button on the bottom left to se generate dummy data that's acceptable.
+                        <p>
+                            Column A will be used for x axis and Row 1 will be treated as headers in the tool's current state. You can use the 
+                            "<i class="bi bi-clipboard-data-fill"></i> Add Dummy Data" button on the bottom left to se generate dummy data 
+                            that's acceptable. You can also add/remove rows/columns via the context menu on the data grid.
+                        </p>
+                        <p>
+                            We recommend that you remove any empty columns and rows for the best results. 
+                        </p>
                     </div>
                     <hr>
                     <div class="row">

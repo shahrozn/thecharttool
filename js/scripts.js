@@ -99,26 +99,28 @@ function plotChart() {
     const chartHeight = $('#chartHeight').val(); 
     ctx.style.height = chartHeight + "px";
 
+    let scales = {
+        x: {
+            beginAtZero: true,
+            grid: {
+                color: chartTheme === "dark" ? "#27374D" : "#DDE6ED", // Color schemes switched with themes
+                borderColor: chartTheme === "dark" ? "#27374D" : "#DDE6ED",
+            },
+        },
+        y: {
+            beginAtZero: true,
+            grid: {
+                color: chartTheme === "dark" ? "#27374D" : "#DDE6ED", // Color schemes switched with themes
+                borderColor: chartTheme === "dark" ? "#27374D" : "#DDE6ED",
+            },
+        },
+    }
+
     theChart = new Chart(ctx, {
         type: selectedChartType === "area" ? "line" : selectedChartType, // Area isn't a chart type - it's just the line chart filled
         data: chartData,
         options: {
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    grid: {
-                        color: chartTheme === "dark" ? "#27374D" : "#DDE6ED", // Color schemes switched with themes
-                        borderColor: chartTheme === "dark" ? "#27374D" : "#DDE6ED",
-                    },
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: chartTheme === "dark" ? "#27374D" : "#DDE6ED", // Color schemes switched with themes
-                        borderColor: chartTheme === "dark" ? "#27374D" : "#DDE6ED",
-                    },
-                },
-            },
+            scales: (selectedChartType === "doughnut" || selectedChartType === "pie" || selectedChartType === "polarArea") ? {} : scales,
             layout: {
                 padding: 20,
             },
@@ -313,7 +315,41 @@ function calculateTrend(arr) {
     }
 }
 
+/**
+ * Triggers on the width adjustment in visual options. 
+ */
 function onChartWidthChange(value) {
     $('#contentColumn').removeClass();
     $('#contentColumn').addClass(`col-${value}`);
+}
+
+/**
+ * Triggers on chart type adjustment in visual options. 
+ */
+function onChartTypeChange(value) {
+
+    // Currently used to provide recommendations for optimal legend placement. Can be further enhanced.
+    switch (value) {
+        case "line":
+            $('#legendRecommendation').text('Recommended: Top/Bottom');
+            break;
+        case "bar":
+            $('#legendRecommendation').text('Recommended: Top/Bottom');
+            break;
+        case "area":
+            $('#legendRecommendation').text('Recommended: Top/Bottom');
+            break;
+        case "doughnut":
+            $('#legendRecommendation').text('Recommended: Left/Right');
+            break;
+        case "pie":
+            $('#legendRecommendation').text('Recommended: Left/Right');
+            break;
+        case "polarArea":
+            $('#legendRecommendation').text('Recommended: Left/Right');
+            break;
+    
+        default:
+            break;
+    }
 }
