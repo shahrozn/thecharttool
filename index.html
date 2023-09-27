@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZZ8MZ92EX"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-JZZ8MZ92EX');
+        </script>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -10,13 +19,19 @@
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/ComboChart.png" />
         <!-- Core theme CSS (includes Bootstrap)-->
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
         <link href="css/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <!-- Handsontable Styling-->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
         <!-- Custom Style definitions-->
         <style>
             .full-width {
                 width: 100%;
+            }
+            .ce-block__content,
+            .ce-toolbar__content {
+                max-width: unset;
             }
         </style>
     </head>
@@ -46,7 +61,7 @@
                             <option value="bg-warning">Orange</option>
                             <option value="bg-danger">Red</option>
                             <option value="bg-secondary">Gray</option>
-                            <option value="bg-light">Light</option>
+                            <option value="bg-light" selected>Light</option>
                             <option value="bg-dark">Dark</option>
                         </select>
 
@@ -72,12 +87,14 @@
 
                         <label for="chartHeight" class="small">Chart Height</label>
                         <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
-                        
-                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided.">📈 Plot</button>
+                        <label for="chartWidth" class="small">Chart Width</label>
+                        <input oninput="onChartWidthChange(this.value)" type="range" id="chartWidth" class="form-range" min="2" max="12" value="12" step="2" data-toggle="tooltip" title="Adjust the width of the chart - this adjusts the bootstrap grids rather than the width property.">
+
+                        <button class="btn btn-outline-primary btn-sm mt-3 full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided."><i class="bi bi-bar-chart-line-fill"></i> Plot</button>
                         <button id="analyzeBtn" class="btn btn-outline-primary btn-sm mt-3 full-width shadow-sm" onclick="analyzeData()" data-toggle="tooltip" title="Analyzes the data to provide basic insights - nothing fancy and may be inaccurate.">⚡ Analyze</button>
-                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart.">⬇️ Download Chart</button>
+                        <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart."><i class="bi bi-download"></i> Download Chart</button>
                         <hr>
-                        <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." >🔢 Add Dummy Data</button>
+                        <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." ><i class="bi bi-clipboard-data-fill"></i> Add Dummy Data</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +103,10 @@
                 <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
-                        <button class="btn btn-outline-dark btn-sm" id="sidebarToggle">&equiv;</button>
+                        <button class="btn btn-outline-dark btn-sm" id="sidebarToggle">
+                            <!-- &equiv; -->
+                            <i class="bi bi-menu-button"></i>
+                        </button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
@@ -110,37 +130,68 @@
                     </div>
                     <hr>
                     <div class="row mb-5">
-                        <div class="col-12 col-md-12 col-xl-12 col-lg-12">
-                            <div id="chartContainer" class="rounded p-3" hidden>
+                        <div id="contentColumn" class="col-12">
+                            <div id="contentContainer" class="rounded p-3" hidden>
                                 <div>
                                     <canvas id="theChart" style="height: 400px;" class="rounded"></canvas>
                                 </div>
-                                <div id="analysisResults" class="mt-2 text-white"></div>
+                                <div id="analysisResults" class="mt-2 text-white" hidden></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <nav class="navbar bg-light text-dark fixed-bottom">
+        <!-- FOOTER -->
+        <nav class="navbar bg-light text-dark">
             <div class="mx-3 small">
               &copy; <script>document.write(new Date().getFullYear())</script> The Chart Tool 
-              • Theme by <a href="https://startbootstrap.com/">StartBootstrap</a> 
-              • Grid by <a href="https://handsontable.com/">Handsontable</a> 
-              • Charts by <a href="https://www.chartjs.org/">Chart.js</a> 
               • View the repository @ <a href="https://github.com/shahrozn/thecharttool">shahrozn/thecharttool</a>
+              • <a class="link-info" href="#" data-bs-toggle="modal" data-bs-target="#creditsModal">How's this built?</a>
             </div>
         </nav>
+        <!-- POPUP MODAL FOR CREDITS -->
+        <div class="modal fade" id="creditsModal" tabindex="-1" role="dialog" aria-labelledby="creditsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="creditsModalLabel">How's this built? 🤔</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><i class="bi bi-arrow-right"></i> Bootstrap Theme by <a href="https://startbootstrap.com/">StartBootstrap</a> </p>
+                        <p><i class="bi bi-arrow-right"></i> Spreadsheet Grid by <a href="https://handsontable.com/">Handsontable</a> </p>
+                        <p><i class="bi bi-arrow-right"></i> Charts by <a href="https://www.chartjs.org/">Chart.js</a> </p>
+                        <p><i class="bi bi-arrow-right"></i> Trend analysis by <a href="https://simple-statistics.github.io/">Simple Statistics</a> </p>
+                        <p><i class="bi bi-arrow-right"></i> Insights Composer by <a href="https://editorjs.io/">Editor.js</a> </p>
+                        
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <!-- Data Handling JS -->
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
+        <!-- Image Download JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.2.0/d3.min.js"></script>
-        <script src="https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/brain.js"></script>
-        <!-- Core theme JS-->
+        <!-- Editor JS -->
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@3.0.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+        <!-- Core Tool JS-->
         <script src="js/scripts.js"></script>
     </body>
 </html>

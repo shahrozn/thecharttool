@@ -35,6 +35,21 @@ const hot = new Handsontable(container, {
 });
 
 let theChart; // Chart instance stored to be able to clear it later
+let editor;
+editor = new EditorJS({
+    holder: 'analysisResults',
+    minHeight: 0,
+    tools: {
+        header: Header,
+        delimiter: Delimiter,
+        paragraph: {
+            class: Paragraph,
+            inlineToolbar: true,
+        },
+        embed: Embed
+    }
+});
+
 document.getElementById("downloadBtn").classList.add("disabled"); // Download button disabled during initialization
 document.getElementById("analyzeBtn").classList.add("disabled"); // Analyze button disabled during initialization
 /**
@@ -147,15 +162,15 @@ function plotChart() {
         ctx.style.backgroundColor = "white";
     }
 
-    if(chartBackground == 'bg-light') {
+    if (chartBackground == 'bg-light') {
         document.getElementById('analysisResults').classList.value = "mt-2 text-dark";
     }
     else {
         document.getElementById('analysisResults').classList.value = "mt-2 text-white";
     }
 
-    document.getElementById("chartContainer").hidden = false;
-    document.getElementById("chartContainer").classList.value = `rounded p-3 ${chartBackground}`;
+    document.getElementById("contentContainer").hidden = false;
+    document.getElementById("contentContainer").classList.value = `rounded p-3 ${chartBackground}`;
     document.getElementById("downloadBtn").classList.remove("disabled"); // Enable download button once chart is plotted
     document.getElementById("analyzeBtn").classList.remove("disabled"); // Enable analyze button once chart is plotted
 }
@@ -164,7 +179,7 @@ function plotChart() {
  * Downloads chart in png format
  */
 function downloadChart() {
-    const chartCanvas = document.getElementById("chartContainer");
+    const chartCanvas = document.getElementById("contentContainer");
 
     domtoimage.toBlob(chartCanvas).then(function (blob) {
         window.saveAs(blob, "chart.png");
@@ -175,13 +190,13 @@ function downloadChart() {
 function addDummyData() {
     let dummyData = [
         ['Time', 'Type A', 'Type B', 'Type C', 'Type D'],
-        ['Monday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Tuesday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Wednesday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Thursday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Friday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Saturday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
-        ['Sunday', Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100), Math.round(Math.random()*100)],
+        ['Monday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Tuesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Wednesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Thursday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Friday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Saturday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Sunday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
     ]
     hot.loadData(dummyData);
 }
@@ -213,9 +228,25 @@ function analyzeData() {
 
         return `&#8594; "${columnStats.column}" has a high of ${columnStats.max.toFixed(2)}, a low of ${columnStats.min.toFixed(2)}, and a mean of ${columnStats.mean.toFixed(2)}. It also has a median of ${columnStats.median.toFixed(2)}, a standard deviation of ${columnStats.stdDev.toFixed(2)}, and ${trendStatement}.`;
     });
-
-    const summaryText = summary.join('<br><br>');
-    document.getElementById('analysisResults').innerHTML = summaryText;
+    console.log(summary);
+    
+    editor.blocks.insert('header',{
+        text: 'Insights',
+        level: 3
+    });
+    for (item of summary) {
+        editor.blocks.insert('paragraph', {
+            text: item,
+            alignment: 'left'
+        });
+    }
+    editor.save().then((outputData) => {
+        console.log('Article data: ', outputData)
+        editor.render(outputData);
+      }).catch((error) => {
+        console.log('Saving failed: ', error)
+      });
+    document.getElementById('analysisResults').hidden = false;
 }
 
 
@@ -244,7 +275,7 @@ function calculateTrend(arr) {
     const n = arr.length;
     if (n === 0) return 'N/A';
 
-    const data = arr.map((value, index) => [index + 1, value]); 
+    const data = arr.map((value, index) => [index + 1, value]);
     const trendResult = ss.linearRegression(data);
     console.log(trendResult);
     const slope = trendResult.m;
@@ -260,4 +291,9 @@ function calculateTrend(arr) {
     } else {
         return 'there is no clear trend';
     }
+}
+
+function onChartWidthChange(value) {
+    $('#contentColumn').removeClass();
+    $('#contentColumn').addClass(`col-${value}`);
 }
