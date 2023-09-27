@@ -41,56 +41,81 @@
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light">The Chart Tool</div>
                 <div class="list-group list-group-flush">
+                    <div class="accordion" id="accordionOptions">
+                        <div class="accordion-item" hidden>
+                            <h2 class="accordion-header" id="optionSetOne">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                Data Options
+                              </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="optionSetOne" data-bs-parent="#accordionOptions">
+                              <div class="accordion-body">
+                                <label for="dataHeaders" class="small">Headers</label>
+                                <select id="dataHeaders" class="form-select mb-3 form-select-sm" data-toggle="tooltip" title="Select where the headers are located.">
+                                    <option value="row">Row 1</option>
+                                    <option value="column">Column A</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="optionSetTwo">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Visual Options
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="optionSetTwo" data-bs-parent="#accordionOptions">
+                                <div class="accordion-body">
+                                    <label for="chartType" class="small">Chart Type</label>
+                                    <select id="chartType" class="form-select mb-3 form-select-sm">
+                                        <option value="line">Line Chart</option>
+                                        <option value="bar">Bar Chart</option>
+                                        <option value="area">Area Chart</option>
+                                    </select>
+                                
+                                    <label for="chartBackground" class="small">Chart Background</label>
+                                    <select id="chartBackground" class="form-select mb-3 form-select-sm">
+                                        <option value="bg-primary">Blue</option>
+                                        <option value="bg-success">Green</option>
+                                        <option value="bg-info">Teal</option>
+                                        <option value="bg-warning">Orange</option>
+                                        <option value="bg-danger">Red</option>
+                                        <option value="bg-secondary">Gray</option>
+                                        <option value="bg-light" selected>Light</option>
+                                        <option value="bg-dark">Dark</option>
+                                    </select>
+                                
+                                    <label for="chartTheme" class="small">Chart Theme</label>
+                                    <select id="chartTheme" class="form-select mb-3 form-select-sm">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                
+                                    <label for="chartTitle" class="small">Chart Title</label>
+                                    <input type="text" id="chartTitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart title">
+                                
+                                    <label for="chartSubtitle" class="small">Chart Subtitle</label>
+                                    <input type="text" id="chartSubtitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart subtitle">
+                                
+                                    <label for="legendPosition" class="small">Legend Position</label>
+                                    <select id="legendPosition" class="form-select mb-3 form-select-sm">
+                                        <option value="top">Top</option>
+                                        <option value="right">Right</option>
+                                        <option value="bottom">Bottom</option>
+                                        <option value="left">Left</option>
+                                    </select>
+                                
+                                    <label for="chartHeight" class="small">Chart Height</label>
+                                    <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
+                                    <label for="chartWidth" class="small">Chart Width</label>
+                                    <input oninput="onChartWidthChange(this.value)" type="range" id="chartWidth" class="form-range" min="2" max="12" value="12" step="2" data-toggle="tooltip" title="Adjust the width of the chart - this adjusts the bootstrap grids rather than the width property.">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="list-group-item list-group-item-light p-3">
-                        <strong>Options</strong>
                         <hr>
-                        <label for="chartType" class="small">Chart Type</label>
-                        <select id="chartType" class="form-select mb-3 form-select-sm">
-                            <option value="line">Line Chart</option>
-                            <option value="bar">Bar Chart</option>
-                            <!-- <option value="scatter">Scatter Chart</option> -->
-                            <option value="area">Area Chart</option> <!-- Added Area Chart option -->
-                            <!-- Add more chart types as needed -->
-                        </select>
-
-                        <label for="chartBackground" class="small">Chart Background</label>
-                        <select id="chartBackground" class="form-select mb-3 form-select-sm">
-                            <option value="bg-primary">Blue</option>
-                            <option value="bg-success">Green</option>
-                            <option value="bg-info">Teal</option>
-                            <option value="bg-warning">Orange</option>
-                            <option value="bg-danger">Red</option>
-                            <option value="bg-secondary">Gray</option>
-                            <option value="bg-light" selected>Light</option>
-                            <option value="bg-dark">Dark</option>
-                        </select>
-
-                        <label for="chartTheme" class="small">Chart Theme</label>
-                        <select id="chartTheme" class="form-select mb-3 form-select-sm">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                        </select>
-
-                        <label for="chartTitle" class="small">Chart Title</label>
-                        <input type="text" id="chartTitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart title">
-
-                        <label for="chartSubtitle" class="small">Chart Subtitle</label>
-                        <input type="text" id="chartSubtitle" class="form-control mb-3 form-control-sm" placeholder="Enter chart subtitle">
-
-                        <label for="legendPosition" class="small">Legend Position</label>
-                        <select id="legendPosition" class="form-select mb-3 form-select-sm">
-                            <option value="top">Top</option>
-                            <option value="right">Right</option>
-                            <option value="bottom">Bottom</option>
-                            <option value="left">Left</option>
-                        </select>
-
-                        <label for="chartHeight" class="small">Chart Height</label>
-                        <input type="range" id="chartHeight" class="form-range" min="100" max="800" value="400" step="50" data-toggle="tooltip" title="Adjust the height of the chart - 50px intervals.">
-                        <label for="chartWidth" class="small">Chart Width</label>
-                        <input oninput="onChartWidthChange(this.value)" type="range" id="chartWidth" class="form-range" min="2" max="12" value="12" step="2" data-toggle="tooltip" title="Adjust the width of the chart - this adjusts the bootstrap grids rather than the width property.">
-
-                        <button class="btn btn-outline-primary btn-sm mt-3 full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided."><i class="bi bi-bar-chart-line-fill"></i> Plot</button>
+                        <button class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided."><i class="bi bi-bar-chart-line-fill"></i> Plot</button>
                         <button id="analyzeBtn" class="btn btn-outline-primary btn-sm mt-3 full-width shadow-sm" onclick="analyzeData()" data-toggle="tooltip" title="Analyzes the data to provide basic insights - nothing fancy and may be inaccurate.">⚡ Analyze</button>
                         <button id="downloadBtn" class="btn btn-outline-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart."><i class="bi bi-download"></i> Download Chart</button>
                         <hr>
@@ -110,7 +135,7 @@
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                                <li class="nav-item active"><a class="nav-link active" href="#!">Home</a></li>
+                                <li class="nav-item"><a class="btn btn-outline-secondary btn-sm mt-1 mb-1" href="#" data-bs-toggle="modal" data-bs-target="#creditsModal">How's this built?</a></li>
                             </ul>
                         </div>
                     </div>
@@ -121,6 +146,9 @@
                     <p>Just dump your data in the grid below (copy & paste works great from a spreadsheet) 
                         and hit "📈Plot" to draw a chart and then "⚡Analyze" to see the (weak) magic 
                         happen!</p>
+                    <div class="alert alert-primary" role="alert">
+                        Column A will be used for x axis and Row 1 will be treated as headers in the tool's current state. 
+                    </div>
                     <hr>
                     <div class="row">
                         <h2 class="h4">Data</h2>
@@ -146,8 +174,8 @@
         <nav class="navbar bg-light text-dark">
             <div class="mx-3 small">
               &copy; <script>document.write(new Date().getFullYear())</script> The Chart Tool 
-              • View the repository @ <a href="https://github.com/shahrozn/thecharttool">shahrozn/thecharttool</a>
-              • <a class="link-info" href="#" data-bs-toggle="modal" data-bs-target="#creditsModal">How's this built?</a>
+              • View the source @ <a href="https://github.com/shahrozn/thecharttool">shahrozn/thecharttool</a>
+              
             </div>
         </nav>
         <!-- POPUP MODAL FOR CREDITS -->
@@ -165,6 +193,8 @@
                         <p><i class="bi bi-arrow-right"></i> Charts by <a href="https://www.chartjs.org/">Chart.js</a> </p>
                         <p><i class="bi bi-arrow-right"></i> Trend analysis by <a href="https://simple-statistics.github.io/">Simple Statistics</a> </p>
                         <p><i class="bi bi-arrow-right"></i> Insights Composer by <a href="https://editorjs.io/">Editor.js</a> </p>
+                        <hr>
+                        <p><i class="bi bi-arrow-right"></i> View the source @ <a href="https://github.com/shahrozn/thecharttool">shahrozn/thecharttool</a> </p>
                         
                         
                     </div>
