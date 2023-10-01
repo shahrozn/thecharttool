@@ -110,13 +110,14 @@ function plotChart() {
         alert("Please add at least two rows of data.");
         return;
     }
-    const headerRow = hot.getColHeader();
-    chartData.labels = headerRow;
+    let headerRow = hot.getColHeader();
+
+    chartData.labels = hotData.map((row) => row[0]);
 
     for (let i = 1; i < headerRow.length; i++) {
         const dataset = {
             label: headerRow[i],
-            data: hotData.slice(1).map((row) => row[i]),
+            data: hotData.slice(0).map((row) => row[i]),
             borderWidth: 1,
             fill: selectedChartType === "area" ? true : false
         };
@@ -153,6 +154,9 @@ function plotChart() {
         type: selectedChartType === "area" ? "line" : selectedChartType, // Area isn't a chart type - it's just the line chart filled
         data: chartData,
         options: {
+            interaction: {
+                mode:'dataset'
+            },
             scales: (selectedChartType === "doughnut" || selectedChartType === "pie" || selectedChartType === "polarArea") ? {} : scales,
             layout: {
                 padding: 20,
@@ -215,7 +219,7 @@ function plotChart() {
     }
 
     $('#analysisResults').removeClass();
-    if (chartBackground == 'bg-light') {
+    if (chartBackground == 'bg-grad-light') {
         $('#analysisResults').addClass('mt-2 text-dark');
     }
     else {
