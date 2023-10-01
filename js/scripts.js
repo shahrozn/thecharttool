@@ -4,7 +4,31 @@
  * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-simple-sidebar/blob/master/LICENSE)
  */
 
+let hot, theChart, editor, isNew = true;
+const COLORS = {
+    Gradients: {
+        Blue: "linear-gradient(126deg, rgba(9,71,121,1) 35%, rgba(0,99,255,1) 100%)",
+        Green: "linear-gradient(126deg, rgba(29,151,108,1) 35%, rgba(147,249,185,1) 100%)",
+        Teal: "linear-gradient(126deg, rgba(34,175,171,1) 35%, rgba(161,236,251,1) 100%)",
+        Orange: "linear-gradient(126deg, rgba(253,200,48,1) 35%, rgba(243,115,53,1) 100%)",
+        Red: "background: linear-gradient(126deg, rgba(237,33,58,1) 35%, rgba(147,41,30,1) 100%)",
+        Dark: "linear-gradient(126deg, rgba(40,40,40,1) 35%, rgba(75,75,75,1) 100%)",
+        Light: "linear-gradient(126deg, rgba(236,233,230,1) 35%, rgba(255,255,255,1) 100%)"
+    },
+    Solids: {
+        Blue: "#094779",
+        Green: "#1d976c",
+        Teal: "#22afab",
+        Orange: "#fdc830",
+        Red: "#ed213a",
+        Dark: "#4b4b4b",
+        Light: "#ece9e6",
+        White: "#FFFFFF",
+        Black: "#000000"
+    }
+}
 window.addEventListener("DOMContentLoaded", (event) => {
+    initialize();
     // Toggle the side navigation
     const sidebarToggle = document.body.querySelector("#sidebarToggle");
     if (sidebarToggle) {
@@ -23,42 +47,52 @@ window.addEventListener("DOMContentLoaded", (event) => {
     }
 });
 
-const container = document.querySelector("#example");
-const hot = new Handsontable(container, {
-    rowHeaders: true,
-    colHeaders: true,
-    height: "auto",
-    contextMenu: true,
-    fillHandle: true,
-    comments: true,
-    licenseKey: "non-commercial-and-evaluation", // for non-commercial use only
-});
+function initialize() {
+    $('#downloadBtn').addClass('disabled');
+    $('#analyzeBtn').addClass('disabled');
+    $('#contentContainer').hide();
+    $('#analysisResults').hide();
 
-let theChart; // Chart instance stored to be able to clear it later
-let editor;
-editor = new EditorJS({
-    holder: 'analysisResults',
-    minHeight: 0,
-    tools: {
-        header: Header,
-        delimiter: Delimiter,
-        paragraph: {
-            class: Paragraph,
-            inlineToolbar: true,
-        },
-        embed: Embed
-    }
-});
-$('#downloadBtn').addClass('disabled');
-$('#analyzeBtn').addClass('disabled');
-$('#contentContainer').hide();
-$('#analysisResults').hide();
+    const container = document.querySelector("#datagrid");
+    hot = new Handsontable(container, {
+        rowHeaders: true,
+        colHeaders: true,
+        height: "auto",
+        contextMenu: true,
+        fillHandle: true,
+        filters: true,
+        dropdownMenu: true,
+        comments: true,
+        licenseKey: "non-commercial-and-evaluation", // for non-commercial use only
+        afterChange: (changes) => hotAfterChange(changes),
+        afterPaste: (data) => pasteTrigger(data)
+    });
 
+    editor = new EditorJS({
+        holder: 'analysisResults',
+        minHeight: 0,
+        tools: {
+            header: Header,
+            delimiter: Delimiter,
+            paragraph: {
+                class: Paragraph,
+                inlineToolbar: true,
+            },
+            embed: Embed
+        }
+    });
+}
+
+/**
+ * Processes the data pasted to the Data Grid
+ */
+function processData() {
+
+}
 /**
  * Plots chart with chart.js using the data provided
  */
 function plotChart() {
-    console.log();
     let selectedChartType = $('#chartType').val();
 
     if (theChart) {
@@ -76,9 +110,8 @@ function plotChart() {
         alert("Please add at least two rows of data.");
         return;
     }
-    chartData.labels = hotData.slice(1).map((row) => row[0]);
-
-    const headerRow = hotData[0];
+    const headerRow = hot.getColHeader();
+    chartData.labels = headerRow;
 
     for (let i = 1; i < headerRow.length; i++) {
         const dataset = {
@@ -194,34 +227,28 @@ function plotChart() {
     $('#contentContainer').addClass(`rounded p-3 ${chartBackground}`);
     $('#downloadBtn').removeClass('disabled');
     $('#analyzeBtn').removeClass('disabled');
+
+    $('#analysisResults').show();
+    Toastify({
+        text: `<h6>Chart plotted!</h6>
+                <p><i>You can now add a basic analysis and/or download it.</i></p>`,
+        duration: 5000,
+        destination: "",
+        newWindow: true,
+        gravity: "bottom", 
+        position: "right", 
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: COLORS.Gradients.Green,
+          "border-radius": "var(--bs-border-radius) !important"
+        },
+        escapeMarkup: false,
+      }).showToast();
 }
 
 /**
- * Downloads chart in png format
+ * Analyzes the data in the data grid and generates basic statistical insights
  */
-function downloadChart() {
-    const chartCanvas = document.getElementById("contentContainer");
-
-    domtoimage.toBlob(chartCanvas).then(function (blob) {
-        window.saveAs(blob, "chart.png");
-    });
-}
-
-
-function addDummyData() {
-    let dummyData = [
-        ['Time', 'Type A', 'Type B', 'Type C', 'Type D'],
-        ['Monday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Tuesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Wednesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Thursday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Friday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Saturday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-        ['Sunday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
-    ]
-    hot.loadData(dummyData);
-}
-
 function analyzeData() {
     const hotData = hot.getData();
     const insights = [];
@@ -269,10 +296,28 @@ function analyzeData() {
     });
 
     $('#analysisResults').show();
+    Toastify({
+        text: `<h6>Analysis added!</h6>
+                <p><i>Please note that the analysis may not be accurate.</i></p>`,
+        duration: 5000,
+        destination: "",
+        newWindow: true,
+        gravity: "bottom", 
+        position: "right", 
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: COLORS.Gradients.Green,
+          "border-radius": "var(--bs-border-radius) !important"
+        },
+        escapeMarkup: false,
+      }).showToast();
 }
 
-
-// Function to calculate the median of an array
+/**
+ * Calculates the median of the provided array
+ * @param {Array} arr Array which contains the data for which the median is required 
+ * @returns Returns the median value
+ */
 function calculateMedian(arr) {
     const sortedArr = [...arr].sort((a, b) => a - b);
     const middle = Math.floor(sortedArr.length / 2);
@@ -284,7 +329,11 @@ function calculateMedian(arr) {
     }
 }
 
-// Function to calculate the standard deviation of an array
+/**
+ * Calculates the standard deviation of the provided array
+ * @param {Array} arr Array which contains the data for which the standard deviation is required 
+ * @returns Returns the standard deviation
+ */
 function calculateStandardDeviation(arr) {
     const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
     const squaredDifferences = arr.map(val => Math.pow(val - mean, 2));
@@ -292,7 +341,11 @@ function calculateStandardDeviation(arr) {
     return Math.sqrt(variance);
 }
 
-// Function to calculate the trend of an array
+/**
+ * Uses linear regression to calculate the trend of the provided array
+ * @param {Array} arr Array which contains the data for which the trend is required 
+ * @returns Returns a statement describing the trend of data
+ */
 function calculateTrend(arr) {
     const n = arr.length;
     if (n === 0) return 'N/A';
@@ -312,6 +365,113 @@ function calculateTrend(arr) {
         return 'there is a downward trend';
     } else {
         return 'there is no clear trend';
+    }
+}
+
+/**
+ * Downloads chart in png format
+ */
+function downloadChart() {
+    const chartCanvas = document.getElementById("contentContainer");
+
+    domtoimage.toBlob(chartCanvas).then(function (blob) {
+        window.saveAs(blob, "chart.png");
+    });
+}
+
+/**
+ * Adds randomly generated numbers in the data grid
+ */
+function addDummyData() {
+    let dummyData = [
+        ['Time', 'Type A', 'Type B', 'Type C', 'Type D'],
+        ['Monday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Tuesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Wednesday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Thursday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Friday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Saturday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+        ['Sunday', Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100), Math.round(Math.random() * 100)],
+    ]
+    hot.loadData(dummyData);
+    Toastify({
+        text: `<h6>Dummy data added!</h6>`,
+        duration: 5000,
+        destination: "",
+        newWindow: true,
+        gravity: "bottom", 
+        position: "right", 
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: COLORS.Gradients.Light,
+          color: COLORS.Solids.Dark
+        },
+        escapeMarkup: false,
+      }).showToast();
+    updateHeaders();
+}
+
+function hotAfterChange(changes) {
+    //console.log(`hot changed: `,changes);
+}
+
+function updateHeaders() {
+    let newHeaders = hot.getData()[0];
+    hot.updateSettings({
+        colHeaders: newHeaders
+    });
+    hot.alter('remove_row', 0, 1);
+    Toastify({
+        text: `<h6>Headers updated!</h6>`,
+        duration: 5000,
+        destination: "",
+        newWindow: true,
+        gravity: "bottom", 
+        position: "right", 
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: COLORS.Gradients.Green,
+        },
+        escapeMarkup: false,
+      }).showToast();
+}
+
+/**
+ * Triggers whenever content is pasted on the Data Grid. 
+ */
+function pasteTrigger(data) {
+    if($('#autoHeaderUpdateCheck').is(':checked')){
+        updateHeaders();
+        Toastify({
+            text: `<h6>Data pasted!</h6>`,
+            duration: 5000,
+            destination: "",
+            newWindow: true,
+            gravity: "bottom", 
+            position: "right", 
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: COLORS.Gradients.Blue,
+            },
+            escapeMarkup: false,
+          }).showToast();
+    }
+    else {
+        Toastify({
+            text: `<h6>Data pasted!</h6>
+                    <p>Click below to update the headers!</p>
+                    <a onclick="updateHeaders()" class="btn btn-sm btn-outline-light">Update</a>`,
+            duration: 5000,
+            destination: "",
+            newWindow: true,
+            gravity: "bottom", 
+            position: "right", 
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: COLORS.Gradients.Blue,
+            },
+            escapeMarkup: false,
+          }).showToast();
     }
 }
 
