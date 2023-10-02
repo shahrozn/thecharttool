@@ -488,7 +488,8 @@ function toast(message, color, duration) {
         stopOnFocus: true, // Prevents dismissing of toast on hover
         style: {
           background: color,
-          color: (color == COLORS.Gradients.Light) ? COLORS.Solids.Black : COLORS.Solids.White
+          color: (color == COLORS.Gradients.Light) ? COLORS.Solids.Black : COLORS.Solids.White,
+          'border-radius': "7.5px"
         },
         escapeMarkup: false,
       }).showToast();
