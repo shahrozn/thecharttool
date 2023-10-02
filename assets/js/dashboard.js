@@ -269,8 +269,11 @@ function analyzeData() {
 
     // Calculate basic statistics and trend analysis for each column
     for (let col = 1; col < hotData[0].length; col++) {
-        const columnData = hotData.slice(1).map(row => parseFloat(row[col]));
-
+        let columnData = hotData.slice(0).map(row => parseFloat(row[col]));
+        if(columnData.includes(null) || columnData.includes('') || columnData.includes(NaN)) {
+            columnData = $.grep(columnData, n => n == 0 || n);
+            toast(`Empty cells in Column "${headers[col]}" will be ignored for the analysis.`, COLORS.Gradients.Orange,5000);
+        }
         const columnStats = {
             column: headers[col], // Column name or header
             count: columnData.length, // Number of data points
@@ -290,7 +293,6 @@ function analyzeData() {
 
         return `&#8594; "${columnStats.column}" has a high of ${columnStats.max.toFixed(2)}, a low of ${columnStats.min.toFixed(2)}, and a mean of ${columnStats.mean.toFixed(2)}. It also has a median of ${columnStats.median.toFixed(2)}, a standard deviation of ${columnStats.stdDev.toFixed(2)}, and ${trendStatement}.`;
     });
-    console.log(summary);
     
     editor.blocks.insert('header',{
         text: 'Insights',
@@ -303,7 +305,6 @@ function analyzeData() {
         });
     }
     editor.save().then((outputData) => {
-        //console.log('Article data: ', outputData)
         editor.render(outputData);
     }).catch((error) => {
         console.log('Saving failed: ', error)
@@ -357,7 +358,6 @@ function calculateTrend(arr) {
 
     const data = arr.map((value, index) => [index + 1, value]);
     const trendResult = ss.linearRegression(data);
-    console.log(trendResult);
     const slope = trendResult.m;
 
     if (slope > 0.05) {
@@ -404,7 +404,7 @@ function addDummyData() {
 }
 
 function hotAfterChange(changes) {
-    //console.log(`hot changed: `,changes);
+    //TODO: Add potential features for automated updates.
 }
 
 function updateHeaders() {
