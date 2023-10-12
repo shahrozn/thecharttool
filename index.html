@@ -25,6 +25,10 @@
   <!-- Toastify Styling -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <link rel="stylesheet" href="./assets/css/styles.min.css" />
+  <!-- ACE Styling -->
+  <link href="https://cdn.jsdelivr.net/npm/ace-builds/css/ace.min.css" rel="stylesheet">
+
+  <!-- Custom Styles -->
   <style>
     .full-width {
         width: 100%;
@@ -83,6 +87,27 @@
     .text-bold {
       font-weight: bold!important;
     }
+    
+    .sql-query-container {
+      height:15em;
+      border-radius: 10px!important;
+      border-style: solid;
+      border-color: transparent;
+    }
+
+    .sql-query-box {
+      /* position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0; */
+      width: 100%;
+      height: 100%;
+      border-radius: 10px!important;
+      border-style: solid;
+      font-family: monospace;
+      font-size: 12pt;
+    }
 </style>
 </head>
 
@@ -107,11 +132,11 @@
           <div class="accordion" id="accordionOptions">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="optionSetOne">
-                  <button class="accordion-button text-primary text-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                  <button class="accordion-button text-primary text-bold" type="button" data-bs-toggle="collapse" data-bs-target="#dataCollapse" aria-expanded="true" aria-controls="dataCollapse">
                     <i class="bi bi-file-spreadsheet-fill mx-1"></i> Data Options
                   </button>
                 </h2>
-                <div id="collapseTwo" class="accordion-collapse  collapse show" aria-labelledby="optionSetOne" data-bs-parent="#accordionOptions">
+                <div id="dataCollapse" class="accordion-collapse  collapse show" aria-labelledby="optionSetOne" data-bs-parent="#accordionOptions">
                   <div class="accordion-body">
                     <label for="updateHeaderBtn" class="small">Update the headers of the data grid with what's in Row 1 in order to use the filter options.</label>
                     <button class="btn btn-info full-width shadow-sm" onclick="updateHeaders()" data-toggle="tooltip" 
@@ -131,16 +156,18 @@
                         Span Gaps
                       </label>
                     </div>
+                    <hr>
+                    <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." ><i class="bi bi-clipboard-data-fill"></i> Add Dummy Data</button>
                   </div>
                 </div>
               </div>
             <div class="accordion-item">
                 <h2 class="accordion-header" id="optionSetTwo">
-                    <button class="accordion-button text-primary text-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    <button class="accordion-button text-primary text-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#visualCollapse" aria-expanded="false" aria-controls="visualCollapse">
                       <i class="bi bi-bar-chart-fill mx-1"></i> Visual Options
                     </button>
                 </h2>
-                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="optionSetTwo" data-bs-parent="#accordionOptions">
+                <div id="visualCollapse" class="accordion-collapse collapse" aria-labelledby="optionSetTwo" data-bs-parent="#accordionOptions">
                     <div class="accordion-body">
                         <label for="chartType" class="small">Chart Type</label>
                         <select onchange="onChartTypeChange(this.value)" id="chartType" class="form-select mb-3 form-select-sm">
@@ -193,14 +220,14 @@
                 </div>
             </div>
           </div>
-          <div class="list-group-item list-group-item-light p-3">
-            <hr>
+          <hr>
+          <div class="list-group-item list-group-item-light p-3 bg-light rounded">
             <button class="btn btn-secondary btn-sm full-width shadow-sm" onclick="plotChart()" data-toggle="tooltip" title="Plots a new chart using the data and settings provided."><i class="bi bi-bar-chart-line-fill"></i> Plot</button>
             <button id="analyzeBtn" class="btn btn-info btn-sm mt-3 full-width shadow-sm" onclick="analyzeData()" data-toggle="tooltip" title="Analyzes the data to provide basic insights - nothing fancy and may be inaccurate.">⚡ Analyze</button>
-            <button id="downloadBtn" class="btn btn-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart."><i class="bi bi-download"></i> Download Chart</button>
+            <button id="downloadBtn" class="btn btn-success btn-sm mt-3 full-width shadow-sm" onclick="downloadChart()" data-toggle="tooltip" title="Downloads a png of the chart."><i class="bi bi-download"></i> Download Chart</button>            
             <hr>
-            <button class="btn btn-outline-secondary btn-sm full-width shadow-sm" onclick="addDummyData()" data-toggle="tooltip" title="Adds dummy information in the grid." ><i class="bi bi-clipboard-data-fill"></i> Add Dummy Data</button>
-        </div>
+            <button id="launchSqlBtn" class="btn btn-outline-primary btn-sm full-width shadow-sm" onclick="" data-toggle="tooltip" title="Check out the SQL functionality of this tool." data-bs-toggle="modal" data-bs-target="#sqlModal"><i class="bi bi-database"></i> SQL?</button>
+          </div>
         </nav>
         <!-- End Sidebar navigation -->
       </div>
@@ -289,8 +316,8 @@
   <!-- POPUP MODAL FOR CREDITS -->
   <div class="modal fade" id="creditsModal" tabindex="-1" role="dialog" aria-labelledby="creditsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content ">
+            <div class="modal-header bg-light rounded-top">
                 <h5 class="modal-title" id="creditsModalLabel">How's this built? 🤔</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
@@ -301,17 +328,48 @@
                 <p><i class="bi bi-arrow-right"></i> Charts by <a href="https://www.chartjs.org/">Chart.js</a> </p>
                 <p><i class="bi bi-arrow-right"></i> Trend analysis by <a href="https://simple-statistics.github.io/">Simple Statistics</a> </p>
                 <p><i class="bi bi-arrow-right"></i> Text composers by <a href="https://editorjs.io/">Editor.js</a> </p>
+                <p><i class="bi bi-arrow-right"></i> Code editor by <a href="https://ace.c9.io">Ace</a> </p>
+                
                 <hr>
                 <p><i class="bi bi-arrow-right"></i> View the source @ <a href="https://github.com/shahrozn/thecharttool">shahrozn/thecharttool</a> </p>
-                
-                
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-light rounded-bottom">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
   </div>
+
+  <!-- POPUP MODAL FOR SQL -->
+  <div class="modal fade" id="sqlModal" tabindex="-1" role="dialog" aria-labelledby="sqlModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light rounded-top">
+                <h5 class="modal-title" id="sqlModalLabel">Generate SQL Query ⚡</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            
+            <div class="modal-body">
+              <p class="small">This will generate an insert query based on the data entered in the data grid 
+                and assumes that the headers match the columns names you require. To get started, please enter
+                the name of the table and hit <strong>Generate SQL Query</strong>.</p>
+              <label for="sqlTableName" class="small">Table Name / Destination</label>
+              <input type="text" id="sqlTableName" class="form-control mb-3 form-control-sm" placeholder="Enter the destination / table name (example: company1.employees)">
+              
+              <button id="generateQueryBtn" class="btn btn-primary btn-sm full-width shadow-sm" onclick="generateSqlQuery()" data-toggle="tooltip" title="Generate a query that can be directly executed to insert the data."><i class="bi bi-filetype-sql"></i> Generate SQL Query</button>
+              <hr>
+              <div class="sql-query-container" id="queryContainer">
+                <div name="queryBox" id="queryBox" class="sql-query-box">#Nothing to see here until you add data 🫥</div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light rounded-bottom">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <!-- Bootstrap & JQuery -->
   <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -328,6 +386,8 @@
   <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@3.0.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+  <!-- ACE JS -->
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds/src-min-noconflict/ace.min.js"></script>
   <!-- Toastify -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <!-- Core Tool JS-->

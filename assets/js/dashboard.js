@@ -5,7 +5,7 @@
  */
 
 //Handsontable, Chart JS, Editor JS, isNew (flag for first execution/plotting - not used at the moment)
-let hot, theChart, editor, chartHeader, isNew = true;
+var hot, theChart, editor, chartHeader, sqlEditor, isNew = true;
 
 window.addEventListener("DOMContentLoaded", (event) => {
     initialize();
@@ -30,8 +30,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
 function initialize() {
     $('#downloadBtn').addClass('disabled');
     $('#analyzeBtn').addClass('disabled');
+    $('#generateQueryBtn').addClass('disabled');
     $('#contentRow').hide();
     $('#analysisResults').hide();
+    $('#queryContainer').hide();
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
       });
@@ -39,6 +41,21 @@ function initialize() {
     const container = document.querySelector("#datagrid");
     initializeHOT(container);
     initializeEditorJS();
+    initializeACE();
+}
+
+function initializeACE() {
+    try {
+        sqlEditor = ace.edit("queryBox", {
+            mode: 'ace/mode/sql',
+            selectionStyle: "text"
+        });
+        sqlEditor.setTheme("ace/theme/monokai");
+
+    } 
+    catch (error) {
+        console.error(error)
+    }
 }
 
 /** Initialize Handsontable Module
@@ -414,6 +431,29 @@ function updateHeaders() {
     });
     hot.alter('remove_row', 0, 1);
     toast('<h6 class="text-white">Headers Updated!</h6>', COLORS.Gradients.Blue, 5000);
+}
+
+function generateSqlQuery() {
+    let dataColumns = hot.getColHeader();
+    let dataRows = hot.getData();
+    let tablename = $('#sqlTableName').val();
+
+    let query = `INSERT INTO ${tablename} 
+    (${dataColumns})
+    VALUES`;
+    
+    for(row of dataRows) {
+        row.forEach((cell, index) => {
+            if (typeof cell === 'string' || cell instanceof String) {
+                row[index] = `'${cell}'`;
+            }
+        });
+        query += `
+        (${row}),`
+    }
+    query = query.slice(0,-1);
+    sqlEditor.session.setValue(query);
+    $('#queryContainer').show();
 }
 
 /**
