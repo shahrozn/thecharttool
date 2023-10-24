@@ -156,6 +156,8 @@ function plotChart() {
     const chartTitle = $('#chartTitle').val();
     const chartSubtitle = $('#chartSubtitle').val();
     const legendPosition = $('#legendPosition').val();
+    const legendAlignment = $('#legendAlignment').val();
+    console.log(`legendAlignement: ${legendAlignment}`);
     const spanGaps = $('#spanGapsCheck').is(':checked');
 
     const chartHeight = $('#chartHeight').val(); 
@@ -197,6 +199,7 @@ function plotChart() {
                     labels: {
                         color: chartTheme === "dark" ? "white" : "black",
                     },
+                    align: legendAlignment
                 },
             },
             responsive: true,
@@ -478,6 +481,13 @@ function pasteTrigger(data) {
 function onChartWidthChange(value) {
     $('#contentColumn').removeClass();
     $('#contentColumn').addClass(`col-${value}`);
+}
+
+/**
+ * Triggers when the drop shadow checkbox is changed. 
+ */
+function onDropShadowChange(value) {
+    $('#theChart').toggleClass('shadow');
 }
 
 /**
