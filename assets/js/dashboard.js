@@ -140,14 +140,23 @@ function plotChart() {
     let headerRow = hot.getColHeader();
 
     chartData.labels = hotData.map((row) => row[0]);
+    const smoothLineChecked = $('#smoothLineCheckBox').is(':checked');
 
     for (let i = 1; i < headerRow.length; i++) {
         const dataset = {
             label: headerRow[i],
             data: hotData.slice(0).map((row) => row[i]),
             borderWidth: 1,
-            fill: selectedChartType === "area" ? true : false
+            fill: selectedChartType === "area" ? true : false,
+            lineTension: ((smoothLineChecked === true) && (selectedChartType === "area" || selectedChartType === "line")) ? 0.5: 0
         };
+        if(($('#trendlineCheck').is(':checked')) && (selectedChartType === "area" || selectedChartType === "line" || selectedChartType === "bar")) {
+            dataset.trendlineLinear = {
+                lineStyle: "dotted",
+                width: 2,
+                projection: false
+            }
+        }
         chartData.datasets.push(dataset);
     }
 
@@ -187,7 +196,8 @@ function plotChart() {
         data: chartData,
         options: {
             interaction: {
-                mode:'dataset'
+                mode:'nearest',
+                intersect: false
             },
             scales: (selectedChartType === "doughnut" || selectedChartType === "pie" || selectedChartType === "polarArea") ? {} : scales,
             layout: {
@@ -198,6 +208,8 @@ function plotChart() {
                     position: legendPosition,
                     labels: {
                         color: chartTheme === "dark" ? "white" : "black",
+                        boxWidth: 12,
+                        padding: 10
                     },
                     align: legendAlignment
                 },
@@ -499,21 +511,33 @@ function onChartTypeChange(value) {
     switch (value) {
         case "line":
             $('#legendRecommendation').text('Recommended: Top/Bottom');
+            $('#smoothLineCheckSection').show();
+            $('#trendlineSection').show();
             break;
         case "bar":
             $('#legendRecommendation').text('Recommended: Top/Bottom');
+            $('#smoothLineCheckSection').hide();
+            $('#trendlineSection').show();
             break;
         case "area":
             $('#legendRecommendation').text('Recommended: Top/Bottom');
+            $('#smoothLineCheckSection').show();
+            $('#trendlineSection').show();
             break;
         case "doughnut":
             $('#legendRecommendation').text('Recommended: Left/Right');
+            $('#smoothLineCheckSection').hide();
+            $('#trendlineSection').hide();
             break;
         case "pie":
             $('#legendRecommendation').text('Recommended: Left/Right');
+            $('#smoothLineCheckSection').hide();
+            $('#trendlineSection').hide();
             break;
         case "polarArea":
             $('#legendRecommendation').text('Recommended: Left/Right');
+            $('#smoothLineCheckSection').hide();
+            $('#trendlineSection').hide();
             break;
     
         default:
