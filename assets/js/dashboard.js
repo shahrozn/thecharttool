@@ -34,6 +34,7 @@ function initialize() {
     $('#contentRow').hide();
     $('#analysisResults').hide();
     $('#queryContainer').hide();
+    $('#zoomSection').hide();
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
       });
@@ -42,6 +43,9 @@ function initialize() {
     initializeHOT(container);
     initializeEditorJS();
     initializeACE();
+    $(".preload").fadeOut(2000, function() {
+        $(".content").fadeIn(1000);        
+    });
 }
 
 function initializeACE() {
@@ -213,6 +217,33 @@ function plotChart() {
                     },
                     align: legendAlignment
                 },
+                zoom: {
+                    zoom: {
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                        onZoom() {
+                            $('#zoomSection').show();
+                        }
+                    },
+                    pan: {
+                        enabled: true,
+                        onPanStart({chart, point}) {
+                          const area = chart.chartArea;
+                          const w25 = area.width * 0.25;
+                          const h25 = area.height * 0.25;
+                          if (point.x < area.left + w25 || point.x > area.right - w25
+                            || point.y < area.top + h25 || point.y > area.bottom - h25) {
+                            return false; // abort
+                          }
+                        },
+                        mode: 'xy',
+                      }
+                }
             },
             responsive: true,
             maintainAspectRatio: false,
